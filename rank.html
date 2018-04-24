@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>拼接代码学生拼接情况监控</title>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		ul li{
+			list-style: none;
+		}
+		body,html{
+			width: 100%;
+			height: 100%;
+		}
+		.wrap{
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(to top,#1c5db5,#25fff5);
+			position: relative;
+		}
+		.wrap h1{
+			text-align: center;
+			line-height: 120px;
+			color: #fff;
+		}
+		.rankTableBox{
+			color: #fff;
+			margin: 0 auto;
+			width: 850px;
+			max-height: 87%;
+			text-align: center;
+			overflow: auto;
+			overflow-x: hidden;
+		}
+		.rankTable{
+			border-collapse: collapse;
+		}
+		.rankTable th{
+			padding: 4px 80px;
+		}
+		.rankTable td{
+			line-height: 32px;
+		}
+		.bglh{
+			background: #1fff2f;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrap">
+		<h1>排行榜</h1>
+		<div class="rankTableBox">
+			<table class="rankTable" border="1">
+				<tr id="th">
+					<th>排名</th>
+					<th>姓名</th>
+					<th>用时(S)</th>
+					<th>提交时间</th>
+				</tr>
+				<tr v-for="(arank,value) in rankList " :class="{bglh:arank.name==myself.name}">
+					<td>{{value+1}}</td>
+					<td>{{arank.name}}</td>
+					<td>{{arank.times}}</td>
+					<td>{{arank.create_time}}</td>
+				</tr>
+				<tr class="bglh" v-if="showme">
+					<td>{{myself.rank}}</td>
+					<td>{{myself.name}}</td>
+					<td>{{myself.times}}</td>
+					<td>{{myself.create_time}}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</body>
+</html>
+<script src="jquery/jquery.js"></script>
+<script src="jquery/vue.js"></script>
+<script src="jquery/axios.js"></script>
+<script type="text/javascript">
+	var wrap=new Vue({
+		el:'.wrap',
+		data:{
+			tid:localStorage.getItem('pt_tid'),
+			uid:localStorage.getItem('pt_uid'),
+			rankList:[],
+			myself:{},
+			showme:true
+		},
+		beforeMount:function(){
+			let that=this;
+			$.ajax({
+				type:'get',
+				url:'http://10.21.40.246/code.php/rank',
+				dataType:'jsonp',
+				data:{
+					tid:this.tid,
+					uid:this.uid,
+				},
+				success:function(data){
+					console.log(data)
+					that.rankList=data.data;
+					that.myself=data.self;
+					for (var i = 0; i < that.rankList.length; i++) {
+						if(that.rankList[i].name==that.myself.name){
+							that.showme=false;
+						}
+					}
+				},
+				error:function(error){
+					console.log(error)
+				}
+			})
+		}
+	})
+</script>

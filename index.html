@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>index1</title>
+<style>
+	*{
+		margin: 0;
+		padding: 0;
+	}
+	ul li{
+		list-style: none;
+	}
+	body,html{
+		width: 100%;
+		height: 100%;
+	}
+	.wrap{
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(to top,#1c5db5,#25fff5);
+		position: relative;
+	}
+	.clear{clear: both;}
+	.box{
+		width: 90%;
+		min-width: 900px;
+		height: 800px;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%,-50%);
+		padding: 15px;
+		box-sizing:border-box;
+		color: #fff;
+		min-height: 200px;
+		text-align: center;
+	}
+	.side{
+		width: 18%;
+		height: 100%;
+		text-align: center;
+		display: none;
+		max-height:600px;
+		overflow:auto;
+	}
+	.side h2{
+		line-height: 50px;
+		border: 2px solid #fff;
+		user-select:none;
+		font-weight: 600;
+	}
+	.move_ul{
+		line-height: 30px;
+		height: 90%;
+		box-sizing:border-box;
+		padding: 0 10px;
+		border:2px solid #00ffd9;
+		overflow: auto;
+	}
+	.move_ul li{
+		margin-top: 10px;
+		user-select:none;
+		cursor: default;
+		display: none;
+		z-index:1;
+		font-size: 20px
+	}
+	.content{
+		width: 82%;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		right: -2%;
+		box-sizing:border-box;
+		padding: 15px 0;
+	}
+	.content_top{
+		width: 100%;
+		height: 200px;
+		box-sizing:border-box;
+		position: relative;
+		display: none;
+		text-align:left; 
+	}
+	#file{
+		/*display: none;*/
+	}
+	.about_file{
+		display:block;
+		width: 150px;
+		height: 60px;
+		line-height: 60px;
+		text-align: center;
+		border: 4px solid #fff;
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%,-50%);
+		z-index: 100;
+	}
+	.content_bottom{
+		width: 85%;
+		height: 540px;
+		box-sizing:border-box;
+		position: relative;
+		display: none;
+	}
+	.content_bottom p{
+		width: 100%;
+		height: 30px;
+		position: absolute;
+		bottom: 0;
+		text-align: center;
+		line-height: 30px;
+	}
+	.tip{
+		top: 0;
+	}
+	#btn{
+		display: block;
+		width: 50px;
+		height: 50px;
+		border-radius:50%;
+		line-height: 50px;
+		text-align: center;
+		border: 2px solid #45b30c;
+		background-image:url(img/btn_bg.png);
+		background-size:cover;
+		background-repeat: no-repeat;
+		background-position: -58px 0px;
+		position: absolute;
+		bottom: -10px;
+		right: 0px;
+		cursor: pointer;
+	}
+	.content_bottom_ul{
+		width: 100%;
+		position: relative;
+		/* top: 15px; */
+		box-sizing:border-box;
+		padding: 0 40px;
+	    max-height: 84%;
+   		overflow: auto;
+	}
+	.content_bottom_ul i{
+		display: inline-block;
+		width: 2em;
+		height: 30px;
+		float: left;
+	}
+	.content_bottom_ul li{
+		float: left;
+		border: 1px solid #f5f566;
+		min-width: 75px;
+		height: 35px;
+		line-height: 35px;
+		text-align: center;
+		user-select:none;
+		margin-right: 5px;
+		/*margin-bottom: 15px;*/
+		cursor: pointer;
+		position: relative;
+		transition: 2s all;
+		font-size: 20px;
+	}
+	#ret{
+		position: absolute;
+		top: 10px;
+		right: 20%;
+		color: #fe5959;
+		display: none;
+		z-index: 100;
+		cursor:pointer;
+	}
+	#clear{
+	    display: block;
+	    width: 50px;
+	    height: 50px;
+	    border-radius:50%;
+	    line-height: 50px;
+	    text-align: center;
+	    border: 2px solid #fe5959;
+	    position: absolute;
+	    bottom: -10px;
+	    left: 0px;
+	    cursor: pointer;
+	    background-image:url(img/btn_bg.png);
+		background-size:cover;
+		background-repeat: no-repeat;
+	}
+	.about_file:hover{
+		border: 4px solid #87fd9d;
+	}
+	.content_top_div{
+		position: absolute;
+		top: 50%;
+		left: 35%;
+		transform: translate(-50%,-50%);
+		/*padding: 15px;*/
+		font-size: 22px;
+	}
+	.content_top h2{
+		width: 63%;
+		float: left;
+		margin-top: 10px;
+		margin-left: 40px;
+	}
+	.content_top h2 span{
+		font-size: 18px;
+		float: right;
+		margin-right: 20px;
+	    line-height: 30px;
+	}
+	#nextTip,#overTip{
+		position: fixed;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%,-50%);
+		text-align: center;
+		font-size: 24px;
+		border:2px solid #fff;
+		padding: 4px 10px;
+		width: 550px;
+		background: #000;
+		display: none;
+		opacity: 0;
+		transition: opacity .5s ;
+		z-index: 10;
+	}
+	#nextBtn,#overBtn,#subBtn{
+		color: #57ff00;
+		cursor: pointer;
+		margin: 0 8px;
+	}
+	#firstshow{
+		width: 300px;
+		height: 200px;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%,-50%);
+		/*width: 160px;
+		height: 30px;
+		padding: 4px;*/
+		z-index: 10;
+		text-align: center;
+	}
+	#select_check{
+		width: 160px;
+		height: 30px;
+		padding: 4px;
+	}
+	.box h1{
+		text-align: center;
+		font-size: 40px;
+
+	}
+	.box p{
+		margin-bottom: 20px;
+	}
+	#firstshow p input{
+		width: 120px;
+		line-height: 30px;
+		text-align: center;
+		outline: none;
+	}
+</style>
+</head>
+<body>
+	<div class="wrap">
+		<div class="box">
+			<h1>拼接代码</h1>
+			<div id="firstshow">
+				<p><label for="name">请输入学号：</label><input type="text" id="name" autofocus="autofocus"></p>
+				<p>选择题目以开始拼接代码</p>
+				<select id="select_check">
+					<option value="-1">请选择</option>
+				</select>
+			</div>
+			<!-- <input type="file" id="file"><label for="file" class="about_file">上传文件</label> -->
+			<span id="ret">重载系统</span>
+			<div class="side">
+				<h2>选项栏</h2>
+				<ul class="move_ul">
+				</ul>
+			</div>
+			<div class="content">
+
+				<div class="content_top">
+					<h2>问题/效果：<span id="questionNum">题数：0/0</span><span id="showTimes">用时：0秒</span></h2>
+					<div class="content_top_div">
+						<p id="content_top_p"></p>
+					</div>
+				</div>
+				<div class="content_bottom">
+					<p id="nextTip">恭喜你完成了，请继续<span id="nextBtn">下一题</span></p>
+					<p id="overTip">已答完所有题目，是否<span id="subBtn">前往排行榜</span>或者<span id="overBtn">重新开始</span></p>
+					<ul id="content_li" class="content_bottom_ul"></ul>
+					<div class="clear"></div>
+					<p id="ps">鼠标拖动或点击左边选项栏添加到下方，点击上方填空栏则清除当前栏的内容</p>
+					<span id="clear">清空</span>
+					<span id="btn" onclick="check()">提交</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+<script src="jquery/jquery.js"></script>
+<script>
+	var arr=new Array(),arr2=new Array(),arr3=new Array(),arr4=new Array(),arr5=new Array(),arr6=new Array();
+	//arr:展示题目数组,arr2:选项数组,arr3:填空数组(填空栏),arr4:干扰项,arr5:上传文件数字,arr6:题目问题数组;
+	var judge_num,judge_num2=false;//当前题数与总题数
+	
+	//字符串转义
+		function HTMLDecode(text) { 
+			var temp = document.createElement("div"); 
+			temp.innerHTML = text; 
+			var output = temp.innerText || temp.textContent; 
+			temp = null; 
+			return output; 
+		} 
+	//随机排列数组arr
+		function randomSort() {
+			return Math.random() > 0.5 ? -1 : 1;
+		}
+
+	//获取问题
+		var select_check=$('#select_check');
+		var uid,t1,times=0;//uid用于跳转排行榜页面时后台获取数据参数
+		$.ajax({
+			type:'get',
+			url:'http://10.21.40.246/code.php/file',
+			dataType:'jsonp',
+			success:function(data){
+				var datas=data;
+				for (var i = 0; i < datas.length; i++) {
+					datas[i].name=datas[i].name.substring(0,datas[i].name.indexOf('.'))
+					select_check.append("<option value="+datas[i].id+">"+datas[i].name+"</option>")
+				}
+			}
+		})
+	//获取题目
+		$('#select_check').on('change',function(){
+			var content;
+			if ($('#name').val()==null||$('#name').val()=="") {//是否已经输入学号
+				alert('请先输入学号，以用于排行榜！');
+				$('#name').focus();
+				this.value=-1;
+				return false;
+			}
+			var that=this;
+			$.ajax({//获取题目的内容
+				type:'get',
+				url:'http://10.21.40.246/code.php/login',
+				dataType:'jsonp',
+				scriptCharset:'UTF-8',
+				data:{
+					sid:$('#name').val(),
+					fid:$('#select_check option:checked').attr('value'),
+				},
+				success:function(data){
+					if (data=="没有此用户") {
+						alert(data);
+						window.location.reload();
+					}else{
+						uid=data.uid;
+						content=data.content;
+		        if (content.charAt(content.length-1)=="\n"||content.charAt(content.length-1)==" ") {
+		            content=content.substring(0,content.length-1);
+		        }
+		   			content=content.replace(/[\r]/g,"");//清除换行和回车键
+			    	arr5=content.split("。");//判断题目结束的地方
+					}
+				}
+			})
+	  	t1=setInterval(function(){//计时
+	  		times++;
+	  		$('#showTimes').html('用时：'+times+'秒')
+	  	},1000);
+
+	    //文件内容获取与临时储存
+	    setTimeout(function(){//缓存数组到浏览器;
+	    	var x1,x2,content;//x1,x2截取问题，content问题选项
+	    	for (var i = 0; i < arr5.length; i++) {
+	    		arr5[i].ind=i;
+	    		x1=arr5[i].indexOf('~');
+	    		x2=arr5[i].lastIndexOf('~');
+	    		arr6[i]=arr5[i].slice(x1+1,x2);
+	    		content=arr5[i].slice(0,x1);
+	    		arr5[i]={content:content,show:arr6[i],state:false};
+	    	}
+	    	arr5_length=arr5.length;
+	      create_new();
+
+	    },200)
+	    $('#ret').fadeIn('slow');
+	    $('#firstshow').fadeOut();
+	    $('.box h1').fadeOut();
+	    $('.content_bottom').fadeIn('slow');
+	    $('.side').fadeIn('slow');
+	    $('.content_top').fadeIn('slow');
+	  });
+
+	//创建新题目；
+	  function create_new(){
+	  	//清空li；
+	  	if (judge_num2==true) {
+	  		$('.move_ul').html("");
+	  		$('.content_bottom_ul').html("");
+	  	};
+	  	//获取数组9中要展示的数组;
+	  	for (var i = 0; i < arr5.length; i++) {
+	  		if (arr5[i].state==false) {
+	  			arr5[i].ind=i;
+	  			arr=arr5[i].content.split(" ");
+	  			arr.show=arr5[i].show;
+	  			judge_num=i;
+	  			break;
+	  		}
+	  	}
+	  	$('#questionNum').html('题数：'+(judge_num+1)+"/"+(arr5.length-1))
+	    arr2=arr4.concat(arr);//混合干扰项；
+			arr2.sort(randomSort);
+			//arr2去重
+			for (var i = 0; i < arr2.length; i++) {
+				for (var j = i+1; j < arr2.length; j++) {
+					if (arr2[i] == arr2[j]) {
+						arr2.splice(j,1);
+					}
+				}
+			}
+			// 添加选择栏li；
+	    for (var i = 0; i < arr2.length; i++) {
+	        arr2[i].ind=i;
+	        $('.move_ul').append("<li>"+arr2[i]+"</li>");
+	    }
+	    //添加可拖动属性
+	    $('.move_ul li').attr({
+	    	draggable: 'true',
+	    	ondragstart: 'drag(event)'
+	    }).fadeIn('slow');
+	  	//添加填空栏li；//判断是否换行
+	  	for (var i = 0; i < arr.length; i++) {
+	    	if (arr[i].indexOf('{')>=0 /*||  arr[i].indexOf('}')>=0*/){
+	    		$('.content_bottom_ul').append("<li></li></br></br></br><i></i>");
+	    	}else if(arr[i].indexOf(';')>=0){
+					if(/*arr[i].indexOf('=')==-1 &&*/ arr[i].indexOf('<=')==-1 && arr[i].indexOf('<')==-1 && arr[i].indexOf('>=')==-1 && arr[i].indexOf('>')==-1){
+						$('.content_bottom_ul').append("<li></li></br></br></br><i></i>");
+					}else{
+						$('.content_bottom_ul').append("<li></li>");
+					}
+	    	}else{
+	        	$('.content_bottom_ul').append("<li></li>");
+	    	}
+	    }
+	    //添加可拖动属性
+	    $('.content_bottom_ul li').attr({
+	    	ondragover: 'alldrap(event)',
+	    	ondrop: 'drop(event)'
+	    });
+	  	$('#content_top_p').text(arr.show);
+	  }
+	//清空填空栏
+	  $('#clear').on('click',function(){
+	  	$('.content_bottom_ul li').text("").css('background','');
+	  })
+
+	//点击事件
+		$('.move_ul').on('click','li',function(){
+			var li_content=$(this).text();
+			var content_li_len=$('.content_bottom_ul li').length;
+			for (var i = 0; i < content_li_len; i++) {
+				var this_content=$('.content_bottom_ul li:eq('+i+')').text();
+				if (this_content==""||this_content==null) {
+					$('.content_bottom_ul li:eq('+i+')').text(li_content);
+					return false;
+				};
+			};
+		})
+	//双击清除所选填空栏的选项
+		$('.content_bottom_ul').on('dblclick','li',function(){
+			$(this).text("");
+		})
+
+	//判断事件
+	  function check(event){
+			arr3=[];
+			var ps=document.getElementById('ps');
+			var content=document.getElementById('content_li');
+			var content_li=content.querySelectorAll('li');
+			for (var i = 0; i < content_li.length; i++) {
+				arr3.push(content_li[i].innerHTML);
+				arr3[i]=HTMLDecode(arr3[i]);
+			}
+			for (var i = 0; i < arr3.length; i++) {
+				if (arr3[i]==arr[i]) {
+					content_li[i].style.background="#3afd5c";
+					content_li[i].style.color="#fff";
+				}else{
+					content_li[i].style.background="#FF4040";
+					content_li[i].style.color="#000";
+				}
+			}
+			s_arr=arr.toString();
+			s_arr3=arr3.toString();
+			if (s_arr3==s_arr) {
+				$('#content_li li').css({'border':'none','minWidth':0,'marginRight':0,'background':'none'});
+				if (judge_num==arr5_length-2) {
+	    		$('#overTip').css({'display':'block','opacity':'1'});
+	    		clearInterval(t1)
+	    		$.ajax({
+						type:'GET',
+						url:'http://10.21.40.246/code.php/sub',
+						data:{
+							uid:uid,
+							tid:$('#select_check option:checked').attr('value'),
+							times:times,
+						},
+						dataType:'jsonp',
+						success:function(data){
+								localStorage.setItem("pt_uid",uid);
+								localStorage.setItem("pt_tid",$('#select_check option:checked').attr('value'));
+						},
+						error:function(data){
+							alert(data)
+						}
+					})
+	  		}else{
+					$('#nextTip').css({'display':'block','opacity':'1'})
+					clearInterval(t1)
+	  		}
+			}else{
+				ps.innerHTML="顺序不对？要不再试试？";
+			}
+		}
+
+	//下一题
+		$('#nextBtn').on('click',function(){
+			$('#nextTip').css({'display':'none','opacity':'0'})
+			judge_num2=true;
+			arr5[judge_num].state=true;
+			create_new();
+			t1=setInterval(function(){
+				times++;
+				$('#showTimes').html('用时：'+times+'秒')
+			},1000);
+		})
+	//重新开始
+		$('#overBtn').on('click',function(){
+			$('#overTip').css({'display':'none','opacity':'0'})
+			for (var i = 0; i < arr5.length; i++) {
+				arr5[i].state=false;
+			}
+			times=0;
+			t1=setInterval(function(){
+				times++;
+				$('#showTimes').html('用时：'+times+'秒')
+			},1000);
+			create_new();
+		})
+	//前往排行榜
+		$('#subBtn').on('click',function(){
+			location.href = 'rank.html';
+		})
+	//重载事件
+	  $('#ret').on('click',function(){
+	  	window.location.reload();
+	  })
+
+	//响应高度；
+		var screen_h=$(window).height();
+		$('.side').css('max-height', screen_h*0.95 +'px');
+		$(window).resize(function() {
+			screen_h=$(this).height();
+			$('.side').css('max-height', screen_h*0.95 +'px');
+		});
+	//拖拽事件
+		function alldrap(ev){
+			ev.preventDefault();
+		}
+		function drag(ev){
+			ev.dataTransfer.setData("text/plain",ev.target.innerHTML);
+		}
+		function drop(ev){
+			ev.preventDefault();
+			var data=ev.dataTransfer.getData("text/plain");
+			ev.target.innerHTML=data;
+		}
+	//localStorage存储获取函数
+    function save(key,val){//保存
+        sessionStorage.setItem(key,JSON.stringify(val));
+    }
+    function fetch(key){//读取
+        return JSON.parse(sessionStorage.getItem(key)) || [] ;
+    }
+</script>

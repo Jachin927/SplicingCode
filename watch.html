@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>拼接代码学生拼接情况监控</title>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		ul li{
+			list-style: none;
+		}
+		body,html{
+			width: 100%;
+			height: 135%;
+		}
+		.wrap{
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(to top,#1c5db5,#25fff5);
+			/*background: blue;*/
+			position: relative;
+		}
+		.wrap h1{
+			text-align: center;
+			line-height: 80px;
+			color: #fff;
+		}
+		.rankTableBox{
+			display: flex;
+			color: #fff;
+			margin: 0 auto;
+			width: 800px;
+			max-height: 87%;
+			text-align: center;
+			position: relative;
+		}
+		.rankTable{
+			/*width: 438px;*/
+			flex: 2;
+			border-collapse: collapse;
+		}
+		.rankUl{
+			margin-left: 40px;
+			flex: 1;
+		}
+		.rankUl h2{
+			text-align: center;
+			margin-bottom: 10px;
+		}
+		.rankUl li{
+			display: inline-block;
+			width: 50%;
+			line-height: 30px;
+		}
+		.rankTable th{
+			padding: 4px 50px;
+		}
+		.rankTable td{
+			line-height: 32px;
+		}
+		#back{
+			display: block;
+			padding: 0 10px;
+			line-height: 30px;
+			border-radius: 10px;
+			position: absolute;
+			top: -45px;
+			left: 18%;
+			text-decoration: none;
+			background: #fff;
+			color:#000;
+		}
+		#back:hover,#delAll:hover,#selP i:hover{
+			background: #43e89f;
+			color: #fff;
+		}
+		#delAll{
+			display: block;
+			padding: 0 10px;
+			line-height: 30px;
+			background: #fff;
+			color: #000;
+			position: absolute;
+			top: -45px;
+			right: 18%;
+			border-radius: 10px;
+			cursor: pointer;
+		}
+		#selP{
+			display: block;
+			width: 840px;
+			line-height: 50px;
+			margin: 0 auto;
+			margin-bottom: 50px;
+			box-sizing: border-box;
+			padding: 0 20px;
+			color: #fff;
+		}
+		#selP select{
+			min-width: 220px;
+			height: 30px;
+			position: relative;
+			top: 1px;
+		}
+		#selP i{
+			font-style: normal;
+			display: inline-block;
+			width: 80px;
+			height: 30px;
+			line-height: 30px;
+			background: #fff;
+			margin-left: 30px;
+			color: #000;
+			text-align: center;
+			border-radius: 10px;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrap">
+		<h1>排行榜监控</h1>
+		<p id="selP">
+			<span>请选择班级:</span>
+			<select v-model="cid">
+				<option value="-1">请选择班级</option>
+				<option v-for="aClass in classList" :value="aClass.id">{{aClass.class_name}}</option>
+			</select>
+			<span style="margin-left: 40px;">请选择题目:</span>
+			<select v-model="tid">
+				<option value="-1">请选择题目</option>
+				<option v-for="aQuestion in questionList" :value="aQuestion.id">{{aQuestion.name}}</option>
+			</select>
+			<i @click="actionWatch()">开始监控</i>
+		</p>
+		<div class="rankTableBox">
+				<a href="admin.html" id="back">返回管理页面</a>
+				<span id="delAll" @click="clearRank()">清空所有排行数据</span>
+			<table class="rankTable" border="1">
+
+				<tr>
+					<th>排名</th>
+					<th>姓名</th>
+					<th>用时(S)</th>
+				</tr>
+				<tr v-for="(aRank,value) in rankList" :vid="aRank.id">
+					<td>{{++value}}</td>
+					<td>{{aRank.name}}</td>
+					<td>{{aRank.times}}</td>
+				</tr>
+			</table>
+			<ul class="rankUl">
+				<h2>未完成名单</h2>
+				<li v-for="aUrank in rankUlist" v-if="aUrank.isDo==false">{{aUrank.name}}</li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>
+<script src="jquery/jquery.js"></script>
+<script src="jquery/vue.js"></script>
+<script>
+	var wrap=new Vue({
+		el:'.wrap',
+		data:{
+			rankList:[],
+			rankUlist:[],
+			classList:[],
+			questionList:[],
+			// delList:['廖俊','元斯涵','陈德威','叶志锋','廖子浩','翁楷枞','翁宏铃','黄博滔','姚泽民','郭家辉','谭伟谋','杨思明','测试账号'],//排除名单
+			cid:0,
+			tid:0,
+			t1:"",
+			num:0,
+			o_cid:0,
+			o_tid:0,
+		},
+		beforeMount:function(){
+			let that=this;
+			// t1=setInterval(function(){
+			// 	that.num++;
+			// },3000)
+			$.ajax({//获取班级
+				type:'GET', 
+				url:'http://10.21.40.246/code.php/class',
+				dataType:'jsonp',
+				success:function(data){
+					// console.log(data)
+					that.classList=data;
+				}
+			}),
+			$.ajax({//获取题目
+				type:'get',
+				url:'http://10.21.40.246/code.php/file',
+				dataType:'jsonp',
+				success:function(data){
+					that.questionList=data;
+					for (var i = 0; i < data.length; i++) {
+						that.questionList[i].name=that.questionList[i].name.substring(0,that.questionList[i].name.indexOf('.'));
+					}
+				}
+			})
+		},
+		methods:{
+			actionWatch:function(){//获取排行榜
+				let that=this;
+				this.o_tid=this.tid;
+				this.o_cid=this.cid;
+				$.ajax({
+					type:'GET', 
+					url:'http://10.21.40.246/code.php/watch',
+					dataType:'jsonp',
+					data:{
+						cid:this.cid,
+						tid:this.tid
+					},
+					success:function(data){
+						that.rankList=data.rank;
+						that.rankUlist=data.info;
+						t1=setInterval(function(){
+							that.num++;
+						},3000)
+						/*for (var i = 0; i < that.rankUlist.length; i++) {//排除名单
+							for (var j = 0; j < that.delList.length; j++) {
+								if (that.rankUlist[i].name==that.delList[j]) {
+									that.rankUlist.splice(i,1);
+									// console.log(j)
+								}
+							}
+						}*/
+					}
+				})
+			},
+			clearRank:function(){
+				var ret=confirm('是否确定清除数据？');
+				if (ret==true) {
+					$.ajax({
+						type:'GET', 
+						url:'http://10.21.40.246/code.php/del_rank',
+						dataType:'jsonp',
+						data:{
+							tid:this.o_tid,
+						},
+						success:function(data){
+							alert(data);
+						}
+					})
+				}
+			},
+		},
+		watch:{
+			num(){
+				let that=this;
+				$.ajax({
+					type:'GET', 
+					url:'http://10.21.40.246/code.php/watch',
+					dataType:'jsonp',
+					data:{
+						cid:this.o_cid,
+						tid:this.o_tid
+					},
+					success:function(data){
+						that.rankList=data.rank;
+						that.rankUlist=data.info;
+						/*for (var i = 0; i < that.rankUlist.length; i++) {//排除名单
+							for (var j = 0; j < that.delList.length; j++) {
+								if (that.rankUlist[i].name==that.delList[j]) {
+									that.rankUlist.splice(i,1);
+								}
+							}
+						}*/
+					}
+				})
+			}
+		}
+	})
+</script>
