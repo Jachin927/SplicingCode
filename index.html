@@ -265,10 +265,17 @@
 		text-align: center;
 		outline: none;
 	}
+	#usedata{
+		position: fixed;
+		right: 0;
+		padding: 4px 20px;
+		color:#777;
+	}
 </style>
 </head>
 <body>
 	<div class="wrap">
+		<div id="usedata">使用次数：<span>0</span></div>
 		<div class="box">
 			<h1>拼接代码</h1>
 			<div id="firstshow">
@@ -313,6 +320,19 @@
 	//arr:展示题目数组,arr2:选项数组,arr3:填空数组(填空栏),arr4:干扰项,arr5:上传文件数字,arr6:题目问题数组;
 	var judge_num,judge_num2=false;//当前题数与总题数
 	
+	//获取使用数据
+	var isAdd=sessionStorage.getItem('splicing_usedata')||1;
+	$.ajax({
+		url:'http://lostars.cn/code.php/sum',
+		method:'get',
+		data:{isAdd:isAdd},
+		dataType:'jsonp',
+		success:function(data){
+			$('#usedata span').text(data.num);
+			sessionStorage.setItem('splicing_usedata',2);
+		}
+	})
+
 	//字符串转义
 		function HTMLDecode(text) { 
 			var temp = document.createElement("div"); 
@@ -331,7 +351,7 @@
 		var uid,t1,times=0;//uid用于跳转排行榜页面时后台获取数据参数
 		$.ajax({
 			type:'get',
-			url:'http://10.21.40.246/code.php/file',
+			url:'http://lostars.cn/code.php/file',
 			dataType:'jsonp',
 			success:function(data){
 				var datas=data;
@@ -353,7 +373,7 @@
 			var that=this;
 			$.ajax({//获取题目的内容
 				type:'get',
-				url:'http://10.21.40.246/code.php/login',
+				url:'http://lostars.cn/code.php/login',
 				dataType:'jsonp',
 				scriptCharset:'UTF-8',
 				data:{
@@ -512,7 +532,7 @@
 	    		clearInterval(t1)
 	    		$.ajax({
 						type:'GET',
-						url:'http://10.21.40.246/code.php/sub',
+						url:'http://lostars.cn/code.php/sub',
 						data:{
 							uid:uid,
 							tid:$('#select_check option:checked').attr('value'),
